@@ -64,4 +64,21 @@ class SpringJpaQueryDslApplicationTests {
             assertThat(response.get(0).name()).isEqualTo("Jay");
         }
     }
+
+    @Nested
+    class PaginatedMembers {
+
+        @Test
+        void returnsMembersWithPagination() {
+            wtc.get()
+                    .uri("/v3/members?page=0&size=2")
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .expectBody()
+                    .jsonPath("$.totalPages").isEqualTo(4)
+                    .jsonPath("$.totalElements").isEqualTo(7)
+                    .jsonPath("$.content.length()").isEqualTo(2);
+        }
+    }
 }

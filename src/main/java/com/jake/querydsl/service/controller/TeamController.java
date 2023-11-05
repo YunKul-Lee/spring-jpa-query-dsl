@@ -30,6 +30,7 @@ public class TeamController {
         return query.searchMembersByTeamId(teamId, searchText);
     }
 
+    @GetMapping("/v3/members")
     public Page<MemberResponse> paginatedMembers(Pageable pageable) {
         return query.members(pageable);
     }
