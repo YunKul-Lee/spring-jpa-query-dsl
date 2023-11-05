@@ -1,13 +1,36 @@
 package com.jake.querydsl;
 
+import com.jake.querydsl.service.model.MemberResponse;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SpringJpaQueryDslApplicationTests {
 
-    @Test
-    void contextLoads() {
+    @Autowired
+    WebTestClient wtc;
+
+    @Nested
+    class Members {
+        @Test
+        void returnsMembers() {
+            var response = wtc.get()
+                    .uri("/v1/teams/1/members")
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .expectBodyList(MemberResponse.class)
+                    .returnResult()
+                    .getResponseBody();
+
+            assertThat(response).hasSize(4);
+        }
     }
+
 
 }
