@@ -32,5 +32,36 @@ class SpringJpaQueryDslApplicationTests {
         }
     }
 
+    @Nested
+    class SearchMembers {
 
+        @Test
+        void returnsMembers() {
+            var response = wtc.get()
+                    .uri("/v2/teams/1/members")
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .expectBodyList(MemberResponse.class)
+                    .returnResult()
+                    .getResponseBody();
+
+            assertThat(response).hasSize(4);
+        }
+
+        @Test
+        void returnsMembersWithMatchingName() {
+            var response = wtc.get()
+                    .uri("/v2/teams/1/members?searchText=jay")
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .expectBodyList(MemberResponse.class)
+                    .returnResult()
+                    .getResponseBody();
+
+            assertThat(response).hasSize(1);
+            assertThat(response.get(0).name()).isEqualTo("Jay");
+        }
+    }
 }
